@@ -26,7 +26,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: """$(sed -nr 's/^\s*\"version": "([0-9]{1,}\.[0-9]{1,}.*)",$/\1/p' package.json)"""
+          release_name: """$(sed -nr 's/^\s*\\"version": "([0-9]{1,}\.[0-9]{1,}.*)",$/\1/p' package.json)"""
           draft: false
           prerelease: false
       - name: Upload Release Asset
