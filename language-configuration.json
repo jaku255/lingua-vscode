@@ -1,0 +1,57 @@
+{
+	"comments": {
+		"blockComment": [ "#", "$" ]
+	},
+	"brackets": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"]
+	],
+	"autoClosingPairs": [
+		{ "open": "{", "close": "}" },
+		{ "open": "[", "close": "]" },
+		{ "open": "(", "close": ")" },
+		{ "open": "'", "close": "'", "notIn": ["string", "comment"] },
+		{ "open": "\"", "close": "\"", "notIn": ["string"] },
+		{ "open": "if ", "close": " fi", "notIn": ["string", "comment"] },
+		{ "open": "let ", "close": " tel", "notIn": ["string", "comment"] },
+		{ "open": "yoke ", "close": " ekoy", "notIn": ["string", "comment"] },
+		{ "open": "proc ", "close": " endproc", "notIn": ["string", "comment"] },
+		{ "open": "mulproc ", "close": " endmulproc", "notIn": ["string", "comment"] },
+		{ "open": "fun ", "close": " endfun", "notIn": ["string", "comment"] },
+		{ "open": "list ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "array ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "record ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "add-attr ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "all-on-li ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "all-in-ar ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "push ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "put-to-arr ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "change-arr ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "add-atr ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "remove-atr ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "change-rec ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "type ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "#", "close": " $", "notIn": ["string"] }
+	],
+	"autoCloseBefore": ";:.,=}])>` \n\t",
+	"surroundingPairs": [
+		["{", "}"],
+		["[", "]"],
+		["(", ")"],
+		["'", "'"],
+		["\"", "\""],
+		["`", "`"]
+	],
+	"folding": {
+		"markers": {
+			"start": "^\\s*//\\s*#?region\\b",
+			"end": "^\\s*//\\s*#?endregion\\b"
+		}
+	},
+	"wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)",
+	"indentationRules": {
+		"increaseIndentPattern": "^[^#]*(array|at|by|record|type|with|as|be|then|else|,)\\s*$",
+		"decreaseIndentPattern": "^\\s*ee\\s*$"
+	}
+}

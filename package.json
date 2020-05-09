@@ -1,0 +1,65 @@
+{
+  "name": "lingua-vscode",
+  "displayName": "Lingua Syntax",
+  "description": "Provides support for Lingua language",
+  "version": "0.0.1",
+  "publisher": "jaku255",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jaku255/lingua-vscode.git"
+  },
+  "engines": {
+    "vscode": "^1.28.0"
+  },
+  "categories": [
+    "Programming Languages"
+  ],
+  "activationEvents": [
+    "onLanguage:lingua",
+    "workspaceContains:**/*.lingua",
+    "onCommand:lingua.upadtePlugin",
+    "*"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "languages": [
+      {
+        "id": "lingua",
+        "extensions": [
+          ".lingua"
+        ],
+        "aliases": [
+          "lingua"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "lingua",
+        "scopeName": "source.lingua",
+        "path": "./lingua.tmGrammar.json"
+      }
+    ],
+    "commands": [
+      {
+        "command": "lingua.updatePlugin",
+        "title": "Update Lingua plugin"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "yaml2json lingua.tmGrammar.yml -s&&tsc -p ./",
+    "package": "vsce package -o lingua-vscode.vsix"
+  },
+  "devDependencies": {
+    "yamljs": "0.3.0",
+    "vsce": "^1.75.0",
+    "@types/node": "^13.13.5",
+    "@types/vscode": "^1.28.0",
+    "@types/tmp": "^0.2.0",
+    "typescript": "^3.8.3",
+    "eslint": "^7.0.0"
+  }
+}

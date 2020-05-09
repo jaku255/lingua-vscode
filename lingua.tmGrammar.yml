@@ -1,0 +1,336 @@
+scopeName: source.lingua
+patterns:
+    - {include: '#declaration'}
+    - {include: '#instruction'}
+    #- {include: '#yoke-expression'}
+repository:
+    data-expression:
+        patterns:
+        - {include: '#record'}
+        - {include: '#list'}
+        - {include: '#array'}
+        - {include: '#keyword-invalid'}
+        - {include: '#keyword'}
+        
+        - {include: '#boolean'}
+        - {include: '#boolean-operator'}
+        - {include: '#number'}
+        - {include: '#operator'}
+        - {include: '#word'}
+        - {include: '#paren-expression'}
+        - {include: '#identifier'}
+
+    identifier:
+        match: '\b[a-zA-Z][a-zA-Z0-9]*\b'
+        name: variable.other
+    boolean:
+        match: '\b(true|false)\b'
+        name: constant.language
+    boolean-operator:
+        match: '\b(and|or|not)'
+        name: keyword.operator
+    number:
+        match: '\b([1-9][0-9]*|[0-9]+,[0-9]+)\b'
+        name: constant.numeric
+    operator:
+        match: '\b\s*([=<+*/©\-])\s*\b'
+        captures: 
+            '1': { name: keyword.operator }
+    list:
+        patterns:
+        -
+            name: meta.list.init
+            begin: \b(list)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.list}
+            endCaptures:
+            - {name: constant.language.end.list}
+            patterns:
+            - {include: '#data-expression'}
+        -
+            name: meta.list.push
+            begin: \b(push)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.list}
+            endCaptures:
+            - {name: constant.language.end.list}
+            patterns:
+            -
+                match: \bon\b
+                name: constant.language.on
+            - {include: '#data-expression'}
+        -
+            match: \btop\b
+            name: constant.language.list.top
+        -
+            match: \bpop\b
+            name: constant.language.list.pop
+    array:
+        patterns:
+        -
+            begin: \b(array)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.array}
+            endCaptures:
+            - {name: constant.language.end.array}
+            name: meta.array.init
+            patterns:
+            -
+                match: \bat\b
+                name: constant.language.at
+            - {include: '#data-expression'}
+        -
+            begin: \b(put-to-arr)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.array}
+            endCaptures:
+            - {name: constant.language.end.array}
+            name: meta.array.put
+            patterns:
+            -
+                match: \bnew\b
+                name: constant.language.new
+            - {include: '#data-expression'}
+        -
+            begin: \b(change-arr)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.array}
+            endCaptures:
+            - {name: constant.language.end.array}
+            name: meta.array.change
+            patterns:
+            -
+                match: \bat\b
+                name: constant.language.at
+            -
+                match: \bby\b
+                name: constant.language.by
+            - {include: '#data-expression'}
+    record:
+        patterns:
+        -
+            begin: \b(record)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.record}
+            endCaptures:
+            - {name: constant.language.end.record}
+            name: meta.record.init
+            patterns:
+            -
+                match: \bat\b
+                name: constant.language.at
+            -
+                match: \bvalue\b
+                name: constant.language.value
+            - {include: '#data-expression'}
+        -
+            begin: \b(add-atr)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.addatr}
+            endCaptures:
+            - {name: constant.language.end.addatr}
+            name: meta.record.addatr
+            patterns:
+            -
+                match: \bvalue\b
+                name: constant.language.value
+            -
+                match: \bto\b
+                name: constant.language.to
+            - {include: '#data-expression'}
+        -
+            begin: \b(remove-atr)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.removeatr}
+            endCaptures:
+            - {name: constant.language.end.removeatr}
+            name: meta.record.removetr
+            patterns:
+            -
+                match: \bfrom\b
+                name: constant.language.from
+            - {include: '#data-expression'}
+        -
+            begin: \b(change-rec)\b
+            end: \b(ee)\b
+            beginCaptures:
+            - {name: constant.language.changerec}
+            endCaptures:
+            - {name: constant.language.end.changerec}
+            name: meta.record.change
+            patterns:
+            -
+                match: \bat\b
+                name: constant.language.at
+            -
+                match: \bby\b
+                name: constant.language.by
+            - {include: '#data-expression'}
+    record-coll:
+        begin: \b(record)\b
+        end: \b(ee)\b
+        beginCaptures:
+        - {name: constant.language.record}
+        endCaptures:
+        - {name: constant.language.end.record}
+        name: meta.record
+        patterns:
+            - {include: '#identifier'}
+            - {include: '#data-expression'}
+            -
+                match: '(<=),'
+                name: keyword.operator
+    if:
+        begin: '\b(if)\b'
+        end: '\b(fi)\b'
+        beginCaptures:
+        - {name: constant.language.if}
+        endCaptures:
+        - {name: constant.language.fi}
+        patterns:
+        - {include: '#data-expression'}
+    keyword-invalid:
+        match: '\b(?:ee|on|top|new|at|by|value|to|from|by)\b'
+        name: invalid.illegal.keyword
+    keyword:
+        match: '\b(if|then|else|fi)\b'
+        name: constant.language
+    word:
+        begin: ''''
+        end: ''''
+
+    transfer-expression:
+        patterns:
+        - {include: '#number'}
+        - {include: '#word'}
+        -
+            match: '\b(value|sum|max|top|array|record|at|ee)\b'
+            name: constant.language
+        -
+            match: '\b(\+|/|©)\b'
+            name: keyword.operator
+    
+    yoke-expression:
+        patterns:
+        -
+            match: '\b(true|false|unique|increasing-nu|all-on-li|all-in-ar)\b'
+            name: constant.language
+        -
+            match: '\b(=|<|and|or|not)\b'
+            name: keyword.operator
+        - {include: '#transfer-expression'}
+
+    body-expression:
+        patterns:
+        -
+            match: '\b(Boolean|number|word|list|array|record|add-atr|as|value|to|ee)\b'
+            name: constant.language
+        - {include: '#identifier'}
+
+    type-expression:
+        patterns:
+        -
+            begin: '\b(type)\b'
+            end: '\b(ee)\b'
+            beginCaptures:
+            - {name: constant.language.type}
+            endCaptures:
+            - {name: constant.language.end.type}
+            patterns:
+            -
+                match: '\bwith\b'
+                name: constant.language.with
+            - {include: '#body-expression'}
+            - {include: '#yoke-expression'}
+            #- {include: '#identifier'}
+
+    declaration:
+        patterns:
+        - # let Identifier be TypExp tel
+            begin: '\b(let)\b'
+            end: '\b(tel)\b'
+            beginCaptures:
+            - {name: constant.language.let}
+            endCaptures:
+            - {name: constant.language.end.let}
+            patterns:
+            -
+                match: '\bbe\b'
+                name: constant.language.be
+            - {include: '#type-expression'}
+            - {include: '#identifier'}
+        - # set-body Identifier as BodExp tes
+            begin: '\b(set-body)\b'
+            end: '\b(tes)\b'
+            beginCaptures:
+            - {name: constant.language.setbody}
+            endCaptures:
+            - {name: constant.language.end.setbody}
+            patterns:
+            -
+                match: '\bas\b'
+                name: constant.language.as
+            - {include: '#body-expression'}
+            - {include: '#identifier'}
+        - # set-type Identifier as TypExp tes
+            begin: '\b(set-type)\b'
+            end: '\b(tes)\b'
+            beginCaptures:
+            - {name: constant.language.settype}
+            endCaptures:
+            - {name: constant.language.end.settype}
+            patterns:
+            -
+                match: '\bas\b'
+                name: constant.language.as
+            - {include: '#type-expression'}
+            - {include: '#identifier'}
+        -
+            match: '\b(skip-d|proc|endproc|mulproc|endmulproc|fun|endfun)\b'
+            name: constant.language.declarationkw
+    
+    instruction:
+        -
+            match: '\b(skip-i|call|val|ref)\b'
+            name: constant.language.instructionkw
+        -
+            begin: '\byoke\b'
+            end: '\bekoy\b'
+            patterns:
+            -
+                match: ':='
+                name: keyword.operator
+    arrayz:
+        begin: '\b(array)\s*\['
+        end: '\]'
+        beginCaptures:
+            '1':
+                name: constant.language.array
+        patterns:
+            -
+                include: '#expression'
+    array.indice:
+        begin: '\.\['
+        end: '\]'
+        patterns:
+            -
+                include: '#expression'
+    paren-expression:
+        begin: \(
+        end: \)
+        beginCaptures:
+        - {name: punctuation.paren.open}
+        endCaptures:
+        - {name: punctuation.paren.close}
+        name: expression.group
+        patterns:
+            -
+                include: '#data-expression'
