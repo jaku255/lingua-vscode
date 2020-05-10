@@ -2,6 +2,7 @@ scopeName: source.lingua
 patterns:
     - {include: '#declaration'}
     - {include: '#instruction'}
+    - {include: '#comment'}
     #- {include: '#yoke-expression'}
 repository:
     data-expression:
@@ -266,6 +267,7 @@ repository:
                 match: '\bbe\b'
                 name: constant.language.be
             - {include: '#type-expression'}
+            - {include: '#yoke-expression'}
             - {include: '#identifier'}
         - # set-body Identifier as BodExp tes
             begin: '\b(set-body)\b'
@@ -298,9 +300,13 @@ repository:
             name: constant.language.declarationkw
     
     instruction:
+        patterns:
         -
             match: '\b(skip-i|call|val|ref)\b'
             name: constant.language.instructionkw
+        -
+            match: ':='
+            name: keyword.operator
         -
             begin: '\byoke\b'
             end: '\bekoy\b'
@@ -308,15 +314,27 @@ repository:
             -
                 match: ':='
                 name: keyword.operator
+        -
+            begin: '\bwhile\b'
+            end: '\bod\b'
+            beginCaptures:
+            - {name: constant.language.while}
+            endCaptures:
+            - {name: constant.language.do.end}
+            patterns:
+            -
+                match: '\bdo\b'
+                name: constant.language.do
+            - {include: '#instruction'}
+            - {include: '#data-expression'}
+        - {include: '#comment'}
     arrayz:
         begin: '\b(array)\s*\['
         end: '\]'
         beginCaptures:
-            '1':
-                name: constant.language.array
+            - name: constant.language.array
         patterns:
-            -
-                include: '#expression'
+            - {include: '#expression'}
     array.indice:
         begin: '\.\['
         end: '\]'
@@ -334,3 +352,9 @@ repository:
         patterns:
             -
                 include: '#data-expression'
+    comment:
+        begin: '#'
+        end: '\$'
+        name: comment.block
+        patterns:
+        - {include: '#comment'}

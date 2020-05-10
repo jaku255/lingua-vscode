@@ -32,6 +32,7 @@
 		{ "open": "remove-atr ", "close": " ee", "notIn": ["string", "comment"] },
 		{ "open": "change-rec ", "close": " ee", "notIn": ["string", "comment"] },
 		{ "open": "type ", "close": " ee", "notIn": ["string", "comment"] },
+		{ "open": "do ", "close": " od", "notIn": ["string", "comment"] },
 		{ "open": "#", "close": " $", "notIn": ["string"] }
 	],
 	"autoCloseBefore": ";:.,=}])>` \n\t",
@@ -51,7 +52,7 @@
 	},
 	"wordPattern": "(-?\\d*\\.\\d\\w*)|([^\\`\\~\\!\\@\\#\\%\\^\\&\\*\\(\\)\\-\\=\\+\\[\\{\\]\\}\\\\\\|\\;\\:\\'\\\"\\,\\.\\<\\>\\/\\?\\s]+)",
 	"indentationRules": {
-		"increaseIndentPattern": "^[^#]*(array|at|by|record|type|with|as|be|then|else|,)\\s*$",
-		"decreaseIndentPattern": "^\\s*ee\\s*$"
+		"increaseIndentPattern": "^[^#]*(array|at|by|record|type|with|as|be|then|else|do|,)\\s*$",
+		"decreaseIndentPattern": "^\\s*(ee|od)\\s*$"
 	}
 }

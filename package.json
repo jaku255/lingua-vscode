@@ -2,7 +2,7 @@
   "name": "lingua-vscode",
   "displayName": "Lingua Syntax",
   "description": "Provides support for Lingua language",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "publisher": "jaku255",
   "repository": {
     "type": "git",
