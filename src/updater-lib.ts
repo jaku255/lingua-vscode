@@ -12,6 +12,29 @@ import { execFile } from 'child_process';
 import { ExtensionContext, Uri, commands, env, window, ProgressLocation } from 'vscode';
 
 import * as tmp from 'tmp';
+import { DEFAULT_MIN_VERSION } from 'tls';
+
+function versionCompare(v1:string, v2:string) {
+    let v1s = v1.replace(/\D+$/,'').split('.');
+    let v2s = v2.replace(/\D+$/,'').split('.');
+    for (var i = 0; i < Math.min(v1s.length, v2s.length); i++) {
+        let v1n = Number(v1s[i]);
+        let v2n = Number(v2s[i]);
+        if (v1n < v2n) return -1;
+        if (v1n > v2n) return 1;
+    }
+    if (v1s.length != v2s.length) return v1s.length - v2s.length;
+    let v1m = v1.match(/\D+$/);
+    let v2m = v2.match(/\D+$/);
+    if (v1m && v2m) {
+        if (v1m[0] < v2m[0]) return -1;
+        if (v1m[0] > v2m[0]) return 1;
+    }
+    if (v1m && !v2m) return 1;
+    if (!v1m && v2m) return -1;
+
+    return 0;
+}
 
 export async function file(mode: number, prefix: string, postfix: string): Promise<TempFile> {
     return new Promise<TempFile>((resolve, reject) => {
@@ -50,7 +73,7 @@ export async function dir(mode: number, prefix?: string, postfix?: string): Prom
  * Info about the new package version.
  */
 export interface ExtensionVersion {
-    version: number;
+    version: string;
     when: number;
     downloadUrl: Uri;
 }
@@ -62,6 +85,7 @@ export interface ExtensionManifest {
     displayName: string;
     name: string;
     publisher: string;
+    version: string
 }
 
 /**
@@ -69,10 +93,6 @@ export interface ExtensionManifest {
  */
 export abstract class ExtensionUpdater {
 
-    /** Key for storing the last installed version in the `globalState` */
-    private installedExtensionVersionKey: string;
-
-    
     /** Extension publisher + name. 
      * This is used as a key to store the last installed version 
      * as well as for the name of the temporary downloaded .vsix file. */
@@ -80,11 +100,12 @@ export abstract class ExtensionUpdater {
 
     /** Extension's `pacakge.json` */
     extensionManifest: ExtensionManifest;
+    installedExtensionVersion: string;
 
     constructor(private context: ExtensionContext) {
         this.extensionManifest = require(this.context.asAbsolutePath('package.json')) as ExtensionManifest;
         this.extensionFullName = this.extensionManifest.publisher + '.' +  this.extensionManifest.name;
-        this.installedExtensionVersionKey = this.extensionFullName + '.lastInstalledConfluenceAttachmentVersion';
+        this.installedExtensionVersion = this.extensionManifest.version;
     }
 
     protected getExtensionManifest(): ExtensionManifest {
@@ -109,9 +130,6 @@ export abstract class ExtensionUpdater {
             // 3. install
             await this.showProgress(`Installing ${this.extensionManifest.displayName}`, () =>
                 this.install(vsixPath));
-
-            // store the version number installed
-            this.context.globalState.update(this.installedExtensionVersionKey, newVersion.version);
 
             // 4. reload
             if (await this.consentToReload()) {
@@ -168,7 +186,7 @@ export abstract class ExtensionUpdater {
         const localFile = fs.createWriteStream(downloadedPath.path);
 
         return new Promise<string>((resolve, reject) => {
-            https.get(downloadUri.toString(),
+            https.request(downloadUri.toString(),
                 {
                 },
                 (resp) => {
@@ -200,9 +218,7 @@ export abstract class ExtensionUpdater {
     private async getNewVersion(): Promise<ExtensionVersion | undefined> {
         const latestVersion = await this.getVersion();
 
-        const installedVersion = this.getCurrentVersion();
-
-        if (installedVersion < latestVersion.version) {
+        if (versionCompare(this.installedExtensionVersion, latestVersion.version) == -1) {
             return latestVersion;
         }
         else {
@@ -216,10 +232,6 @@ export abstract class ExtensionUpdater {
         return window.withProgress({ location: ProgressLocation.Window, title: message }, payload);
     }
 
-    private getCurrentVersion(): number {
-        return this.context.globalState.get<number>(this.installedExtensionVersionKey) ?? -1;
-    }
-
     /**
      * Requests user confirmation to download and install new version.
      * @param newVersion new version
@@ -227,11 +239,7 @@ export abstract class ExtensionUpdater {
     private async consentToInstall(newVersion: ExtensionVersion): Promise<boolean> {
         const downloadAndInstall = 'Download and Install';
 
-        const currentVersion = this.getCurrentVersion();
-        const versionDiff = newVersion.version - currentVersion;
-        const versionsBehindWarning = currentVersion > -1 && versionDiff > 1 ?
-            `is ${versionDiff} release behind and ` : '';
-        const answer = await window.showWarningMessage(`New version of the '${this.extensionManifest.displayName}' extension is available. The one you are currently using ${versionsBehindWarning}may no longer work correctly with the other tools.`,
+        const answer = await window.showWarningMessage(`New version of the '${this.extensionManifest.displayName}' extension is available.\nInstalled: ${this.installedExtensionVersion}, current: ${newVersion.version}.`,
             {}, downloadAndInstall);
 
         return answer === downloadAndInstall;

@@ -32,7 +32,7 @@ export class GitHubUpdater extends ExtensionUpdater {
                         try {
                             const release = JSON.parse(data);
 
-                            const version = release["tag_name"];
+                            const version = release["name"];
                             const when = Date.parse(release["published_at"]);
                             const asset = release["assets"].find((x:any) => x["name"].endsWith(".vsix"));
                             const downloadUrl = Uri.parse(asset["browser_download_url"]);
