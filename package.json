@@ -16,9 +16,7 @@
   ],
   "activationEvents": [
     "onLanguage:lingua",
-    "workspaceContains:**/*.lingua",
-    "onCommand:lingua.upadtePlugin",
-    "*"
+    "workspaceContains:**/*.lingua"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -42,10 +40,6 @@
       }
     ],
     "commands": [
-      {
-        "command": "lingua.updatePlugin",
-        "title": "Update Lingua plugin"
-      }
     ]
   },
   "scripts": {
@@ -58,7 +52,6 @@
     "vsce": "^1.75.0",
     "@types/node": "^13.13.5",
     "@types/vscode": "^1.28.0",
-    "@types/tmp": "^0.2.0",
     "typescript": "^3.8.3",
     "eslint": "^7.0.0"
   }
