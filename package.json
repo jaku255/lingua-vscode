@@ -39,13 +39,26 @@
         "path": "./lingua.tmGrammar.json"
       }
     ],
-    "commands": [
-    ]
+    "commands": [],
+    "configuration": {
+      "title": "Lingua",
+      "properties": {
+        "lingua.serverExecutable": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "description": "Path to the Lingua Language Server executable"
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
     "compile": "yaml2json lingua.tmGrammar.yml -s&&tsc -p ./",
     "package": "vsce package -o lingua-vscode.vsix"
+  },
+  "dependencies": {
+    "vscode-languageclient": "^6.1.3"
   },
   "devDependencies": {
     "yamljs": "0.3.0",
