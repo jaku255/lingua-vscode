@@ -1,0 +1,39 @@
+scopeName: source.lingua
+patterns:
+    - {include: '#boolean'}
+    - {include: '#boolean-operator'}
+    - {include: '#number'}
+    - {include: '#word'}
+    - {include: '#operator'}
+    - {include: '#keywords-all'}
+    - {include: '#comment'}
+repository:
+    identifier:
+        match: '\b[a-zA-Z][a-zA-Z0-9_]*\b'
+        name: variable.other
+    boolean:
+        match: '\b(true|false)\b'
+        name: constant.language
+    boolean-operator:
+        match: '\b(and|or|not)'
+        name: keyword.operator
+    number:
+        match: '\b([1-9][0-9]*|[0-9]+,[0-9]+)\b'
+        name: constant.numeric
+    operator:
+        match: '\b\s*([=<+*/©\-@]|<=|>=|!=|\:=)\s*\b'
+        captures: 
+            '1': { name: keyword.operator }
+    word:
+        begin: ''''
+        end: ''''
+        name: string.quoted.single
+    keywords-all:
+        match: '\b(ee|list|push|on|top|pop|array|put-to-arr|new|change-arr|at|by|record|value|add-atr|to|remove-atr|from|change-rec|and|or|not|if|then|else|fi|sum|max|unique|increasing-nu|all-on-li|all-in-ar|Boolean|number|word|type|with|let|be|tel|set-body|tes|set-type|as|skip-d|proc|endproc|mulproc|endmulproc|fun|endfun|empty-ap|empty-fp|sa|val|ref|return|skip-i|yoke|ekoy|if-error|while|do|od|call)\b'
+        name: constant.language.misckw
+    comment:
+        begin: '#'
+        end: '\$'
+        name: comment.block
+        patterns:
+        - {include: '#comment'}

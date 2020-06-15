@@ -2,7 +2,7 @@
   "name": "lingua-vscode",
   "displayName": "Lingua Syntax",
   "description": "Provides support for Lingua language",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "jaku255",
   "repository": {
     "type": "git",
@@ -24,11 +24,17 @@
       {
         "id": "lingua",
         "extensions": [
-          ".lingua"
+          ".lingua",
+          ".lin"
         ],
         "aliases": [
           "lingua"
         ],
+        "configuration": "./language-configuration.json"
+      },
+      {
+        "id": "lingua-primitive",
+        "aliases": ["lingua-primitive"],
         "configuration": "./language-configuration.json"
       }
     ],
@@ -37,6 +43,11 @@
         "language": "lingua",
         "scopeName": "source.lingua",
         "path": "./lingua.tmGrammar.json"
+      },
+      {
+        "language": "lingua-primitive",
+        "scopeName": "source.lingua",
+        "path": "./linguaPrimitive.tmGrammar.json"
       }
     ],
     "commands": [],
@@ -48,13 +59,30 @@
           "default": "",
           "scope": "machine-overridable",
           "description": "Path to the Lingua Language Server executable"
+        },
+        "lingua.serverLog": {
+          "type": "string",
+          "default": "",
+          "scope": "machine-overridable",
+          "description": "Enables writing server log to file"
+        },
+        "linguaServer.trace.server": {
+					"scope": "window",
+					"type": "string",
+					"enum": [
+						"off",
+						"messages",
+						"verbose"
+					],
+					"default": "off",
+          "description": "Traces the communication between VS Code and the language server."
         }
       }
     }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "yaml2json lingua.tmGrammar.yml -s&&tsc -p ./",
+    "compile": "yaml2json lingua.tmGrammar.yml -s&&yaml2json linguaPrimitive.tmGrammar.yml -s&&tsc -p ./",
     "package": "vsce package -o lingua-vscode.vsix"
   },
   "dependencies": {

@@ -9,7 +9,7 @@ repository:
         patterns:
         - {include: '#record'}
         - {include: '#list'}
-        - {include: '#array'}
+        - {include: '#array-data'}
         - {include: '#keyword-invalid'}
         - {include: '#keyword'}
         
@@ -20,9 +20,9 @@ repository:
         - {include: '#word'}
         - {include: '#paren-expression'}
         - {include: '#identifier'}
-
+    
     identifier:
-        match: '\b[a-zA-Z][a-zA-Z0-9]*\b'
+        match: '\b[a-zA-Z][a-zA-Z0-9_]*\b'
         name: variable.other
     boolean:
         match: '\b(true|false)\b'
@@ -68,7 +68,7 @@ repository:
         -
             match: \bpop\b
             name: constant.language.list.pop
-    array:
+    array-body:
         patterns:
         -
             begin: \b(array)\b
@@ -83,6 +83,7 @@ repository:
                 match: \bat\b
                 name: constant.language.at
             - {include: '#data-expression'}
+    array-data:
         -
             begin: \b(put-to-arr)\b
             end: \b(ee)\b
@@ -207,6 +208,7 @@ repository:
     word:
         begin: ''''
         end: ''''
+        name: string.quoted.single
 
     transfer-expression:
         patterns:
@@ -267,7 +269,6 @@ repository:
                 match: '\bbe\b'
                 name: constant.language.be
             - {include: '#type-expression'}
-            - {include: '#yoke-expression'}
             - {include: '#identifier'}
         - # set-body Identifier as BodExp tes
             begin: '\b(set-body)\b'
@@ -295,14 +296,77 @@ repository:
                 name: constant.language.as
             - {include: '#type-expression'}
             - {include: '#identifier'}
+        - # proc Identifier IprCon endproc
+            begin: '\b(proc)\b'
+            end: '\b(endproc)\b'
+            beginCaptures:
+            - {name: constant.language.proc}
+            endCaptures:
+            - {name: constant.language.end.proc}
+            patterns:
+            -
+                match: '\b(?val|ref)\b'
+                name: constant.language.paramkw
+            - {include: '#parameters-decl'}
+            - {include: '#declaration'}
+            - {include: '#instruction'}
+            - {include: '#identifier'}
+        - # mulproc MprCon endmulproc
+            begin: '\b(mulproc)\b'
+            end: '\b(endmulproc)\b'
+            beginCaptures:
+            - {name: constant.language.mulproc}
+            endCaptures:
+            - {name: constant.language.end.mulproc}
+            patterns:
+            -
+                match: '\b(?:val|ref)\b'
+                name: constant.language.paramkw
+            - {include: '#parameters-decl'}
+            - {include: '#declaration'}
+            - {include: '#instruction'}
+            - {include: '#identifier'}
+        - # fun Identifier FprCon endfun
+            begin: '\b(fun)\b'
+            end: '\b(endfun)\b'
+            beginCaptures:
+            - {name: constant.language.fun}
+            endCaptures:
+            - {name: constant.language.end.fun}
+            patterns:
+            -
+                match: '\b(?:val|ref|as|sa)\b'
+                name: constant.language.paramkw
+            - {include: '#parameters-decl'}
+            - {include: '#declaration'}
+            - {include: '#instruction'}
+            - {include: '#type-expression'}
+            - {include: '#identifier'}
         -
-            match: '\b(skip-d|proc|endproc|mulproc|endmulproc|fun|endfun)\b'
-            name: constant.language.declarationkw
-    
+            match: '\b(skip-d)\b'
+            name: constant.language.skipdecl
+    parameters-decl:
+        patterns:
+        -
+            match: '\b(empty-ap|empty-fp)\b'
+            name: constant.language.paramkw
+        -
+            begin: '\b(as)\b'
+            end: '\b(sa)\b'
+            beginCaptures:
+            - {name: constant.language.as}
+            endCaptures:
+            - {name: constant.language.end.as}
+            patterns:
+            -
+                match: '\b(?:val|ref)\b'
+                name: constant.language.paramkw
+            - {include: '#type-expression'}
+            - {include: '#identifier'}
     instruction:
         patterns:
         -
-            match: '\b(skip-i|call|val|ref)\b'
+            match: '\b(skip-i|call|val|ref|return)\b'
             name: constant.language.instructionkw
         -
             match: ':='
